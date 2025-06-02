@@ -2,6 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 require('dotenv').config();
+console.log(
+  'API Key loaded:',
+  process.env.OPENAI_API_KEY
+    ? 'Yes (ends with: ' + process.env.OPENAI_API_KEY.slice(-4) + ')'
+    : 'No'
+);
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -12,7 +18,12 @@ const openai = new OpenAI({
 });
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://aide-freelance.vercel.app', 'https://*.vercel.app'],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Route de test
@@ -70,7 +81,8 @@ app.post('/generate-pack', async (req, res) => {
       cgv: cgv,
     });
   } catch (error) {
-    console.error('Erreur:', error);
+    console.error('Erreur:', error?.response?.data || error?.message || error);
+
     res.status(500).json({ error: 'Erreur lors de la génération des CGV' });
   }
 });
