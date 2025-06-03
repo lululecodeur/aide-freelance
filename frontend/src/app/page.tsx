@@ -158,7 +158,7 @@ export default function Home() {
       </div>
 
       <div className="relative z-10 min-h-screen flex flex-col justify-center items-center px-4 text-center">
-        {/* Hero Section */}
+        {/* Hero Section de fou*/}
         <div className="max-w-4xl mx-auto mb-16">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium mb-8 shadow-lg animate-pulse">
