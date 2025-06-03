@@ -226,31 +226,6 @@ const Crown = ({ size = 24, className = '' }) => (
   </svg>
 );
 
-const LegalDisclaimer = () => (
-  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-sm max-w-4xl mx-auto">
-    <div className="flex items-start gap-3">
-      <div className="text-amber-600 mt-0.5 text-lg">⚠️</div>
-      <div className="text-amber-800">
-        <p className="font-semibold mb-2">Avertissement juridique</p>
-        <div className="space-y-1 text-xs leading-relaxed">
-          <p>
-            • Les documents générés sont des <strong>modèles indicatifs</strong> basés sur le droit
-            français
-          </p>
-          <p>
-            • Ils ne constituent <strong>pas un conseil juridique personnalisé</strong>
-          </p>
-          <p>
-            • Il est <strong>vivement recommandé</strong> de faire relire vos documents par un
-            professionnel du droit
-          </p>
-          <p>• Chaque situation est unique et peut nécessiter des adaptations spécifiques</p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 interface DocumentType {
   id: string;
   title: string;
@@ -391,8 +366,6 @@ Généré via aide-freelance.fr
       // Version clean pour l'affichage (sans footer)
       setTexte(documentText);
 
-      // Version avec footer pour l'export/sauvegarde
-      const protectedText = addLegalFooter(documentText, doc.title, nom);
       // Tu peux stocker ça dans un autre state si besoin pour l'export PDF
     } catch (error) {
       console.error('Erreur:', error);
