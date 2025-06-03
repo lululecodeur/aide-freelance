@@ -226,6 +226,31 @@ const Crown = ({ size = 24, className = '' }) => (
   </svg>
 );
 
+const LegalDisclaimer = () => (
+  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-sm max-w-4xl mx-auto">
+    <div className="flex items-start gap-3">
+      <div className="text-amber-600 mt-0.5 text-lg">⚠️</div>
+      <div className="text-amber-800">
+        <p className="font-semibold mb-2">Avertissement juridique</p>
+        <div className="space-y-1 text-xs leading-relaxed">
+          <p>
+            • Les documents générés sont des <strong>modèles indicatifs</strong> basés sur le droit
+            français
+          </p>
+          <p>
+            • Ils ne constituent <strong>pas un conseil juridique personnalisé</strong>
+          </p>
+          <p>
+            • Il est <strong>vivement recommandé</strong> de faire relire vos documents par un
+            professionnel du droit
+          </p>
+          <p>• Chaque situation est unique et peut nécessiter des adaptations spécifiques</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 interface DocumentType {
   id: string;
   title: string;
@@ -303,6 +328,36 @@ export default function PackJuridiqueApp() {
     },
   ];
 
+  // Fonction helper pour ajouter le footer légal
+
+  const addLegalFooter = (documentText: string, documentType: string, nom: string) => {
+    const footer = `
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️ AVERTISSEMENT JURIDIQUE
+
+Ce document "${documentType}" a été généré automatiquement par Pack Juridique IA 
+le ${new Date().toLocaleDateString('fr-FR')} pour ${nom}.
+
+IMPORTANT :
+• Ce document est un modèle indicatif basé sur le droit français
+• Il ne constitue pas un conseil juridique personnalisé
+• Il est vivement recommandé de faire relire ce document par un professionnel 
+  du droit avant utilisation
+• Chaque situation étant unique, des adaptations peuvent être nécessaires
+• L'utilisateur assume la responsabilité de l'utilisation de ce modèle
+
+Pack Juridique IA décline toute responsabilité quant à l'utilisation de ces modèles.
+Pour toute question juridique spécifique, consultez un avocat ou juriste.
+
+Généré via aide-freelance.fr
+═══════════════════════════════════════════════════════════════════════════════`;
+
+    return documentText + footer;
+  };
+
+  // Fonction handleGenerate corrigée
   const handleGenerate = async (doc: DocumentType) => {
     // Vérifier si le document nécessite un paiement
     if (!doc.isFree && !isPremium) {
@@ -329,7 +384,16 @@ export default function PackJuridiqueApp() {
       if (!res.ok) throw new Error(`Erreur lors de la génération du ${doc.title}`);
       const data = await res.json();
       setMessage(data.message);
-      setTexte(data.cgv || data.document);
+
+      // 🎯 NOUVEAUTÉ : Stocker les deux versions
+      const documentText = data.cgv || data.document;
+
+      // Version clean pour l'affichage (sans footer)
+      setTexte(documentText);
+
+      // Version avec footer pour l'export/sauvegarde
+      const protectedText = addLegalFooter(documentText, doc.title, nom);
+      // Tu peux stocker ça dans un autre state si besoin pour l'export PDF
     } catch (error) {
       console.error('Erreur:', error);
       setMessage('Erreur de connexion au serveur.');
@@ -339,7 +403,9 @@ export default function PackJuridiqueApp() {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(texte);
+    // Ajouter le footer seulement lors de la copie
+    const protectedText = addLegalFooter(texte, documentType, nom);
+    navigator.clipboard.writeText(protectedText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

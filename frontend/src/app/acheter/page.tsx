@@ -207,7 +207,7 @@ export default function AcheterPage() {
             </div>
             <div className="flex items-center gap-2">
               <Check size={16} className="text-indigo-500" />
-              <span>Conformité juridique garantie</span>
+              <span>Documents modèles conformes</span>
             </div>
             <div className="flex items-center gap-2">
               <Zap size={16} className="text-purple-500" />
@@ -218,7 +218,7 @@ export default function AcheterPage() {
           {/* Trust indicators */}
           <div className="mt-12 text-center">
             <p className="text-slate-500 text-sm mb-4">
-              Rejoins les centaines de freelances qui ont déjà sécurisé leur activité
+              Rejoins les freelances qui sécurisent leur activité
             </p>
             <div className="flex justify-center items-center gap-1">
               {[...Array(5)].map((_, i) => (
@@ -226,8 +226,19 @@ export default function AcheterPage() {
                   ⭐
                 </span>
               ))}
-              <span className="text-slate-600 ml-2 text-sm">4.9/5 • Plus de 200 avis</span>
+              <span className="text-slate-600 ml-2 text-sm">
+                Nouveau produit - Sois parmi les premiers !
+              </span>
             </div>
+          </div>
+
+          {/* DISCLAIMER LÉGAL DISCRET */}
+          <div className="mt-8 max-w-2xl mx-auto">
+            <p className="text-xs text-slate-400 leading-relaxed text-center">
+              ⚠️ Les documents générés sont des modèles indicatifs ne constituant pas un conseil
+              juridique personnalisé. Il est recommandé de faire relire vos documents par un
+              professionnel du droit.
+            </p>
           </div>
         </div>
       </div>

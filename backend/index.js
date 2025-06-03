@@ -58,7 +58,7 @@ app.post('/generate-pack', async (req, res) => {
     Formate le texte de manière claire et professionnelle.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -114,7 +114,7 @@ app.post('/generate-cgu', async (req, res) => {
     Formate le texte de manière claire et professionnelle.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -167,7 +167,7 @@ app.post('/generate-mentions', async (req, res) => {
     Formate le texte de manière claire et professionnelle. Utilise des exemples génériques pour les informations spécifiques (adresse, SIRET, etc.) qui devront être complétées.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -223,7 +223,7 @@ app.post('/generate-rgpd', async (req, res) => {
     Formate le texte de manière claire et professionnelle.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -281,7 +281,7 @@ app.post('/generate-contract', async (req, res) => {
     Formate le texte comme un contrat professionnel avec des clauses claires.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
