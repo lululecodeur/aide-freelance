@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
 // Icons as simple SVG components
 const ArrowRight = ({ size = 24, className = '' }) => (
   <svg
@@ -16,6 +17,7 @@ const ArrowRight = ({ size = 24, className = '' }) => (
     <polyline points="12,5 19,12 12,19" />
   </svg>
 );
+
 const Rocket = ({ size = 24, className = '' }) => (
   <svg
     width={size}
@@ -32,6 +34,7 @@ const Rocket = ({ size = 24, className = '' }) => (
     <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
   </svg>
 );
+
 const FileText = ({ size = 24, className = '' }) => (
   <svg
     width={size}
@@ -209,6 +212,20 @@ const HandShake = ({ size = 24, className = '' }) => (
   </svg>
 );
 
+const Crown = ({ size = 24, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    className={className}
+  >
+    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm0 16h20" />
+  </svg>
+);
+
 interface DocumentType {
   id: string;
   title: string;
@@ -216,6 +233,7 @@ interface DocumentType {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   color: string;
   endpoint: string;
+  isFree: boolean;
 }
 
 export default function PackJuridiqueApp() {
@@ -227,24 +245,17 @@ export default function PackJuridiqueApp() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [documentType, setDocumentType] = useState('');
+  const [isPremium, setIsPremium] = useState(false);
+
+  // Vérifier le statut premium au montage du composant
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const paidStatus = localStorage.getItem('aPaye') === 'true';
+      setIsPremium(paidStatus);
+    }
+  }, []);
 
   const documents: DocumentType[] = [
-    {
-      id: 'cgv',
-      title: 'CGV',
-      description: 'Conditions générales de vente conformes au droit français',
-      icon: Scale,
-      color: 'from-blue-500 to-indigo-600',
-      endpoint: '/generate-pack',
-    },
-    {
-      id: 'cgu',
-      title: 'CGU',
-      description: 'Conditions générales d&apos;utilisation pour ton site/app',
-      icon: Settings,
-      color: 'from-purple-500 to-pink-600',
-      endpoint: '/generate-cgu',
-    },
     {
       id: 'mentions',
       title: 'Mentions Légales',
@@ -252,6 +263,25 @@ export default function PackJuridiqueApp() {
       icon: Shield,
       color: 'from-green-500 to-emerald-600',
       endpoint: '/generate-mentions',
+      isFree: true,
+    },
+    {
+      id: 'cgv',
+      title: 'CGV',
+      description: 'Conditions générales de vente conformes au droit français',
+      icon: Scale,
+      color: 'from-blue-500 to-indigo-600',
+      endpoint: '/generate-pack',
+      isFree: false,
+    },
+    {
+      id: 'cgu',
+      title: 'CGU',
+      description: "Conditions générales d'utilisation pour ton site/app",
+      icon: Settings,
+      color: 'from-purple-500 to-pink-600',
+      endpoint: '/generate-cgu',
+      isFree: false,
     },
     {
       id: 'rgpd',
@@ -260,6 +290,7 @@ export default function PackJuridiqueApp() {
       icon: Lock,
       color: 'from-red-500 to-orange-600',
       endpoint: '/generate-rgpd',
+      isFree: false,
     },
     {
       id: 'contrat',
@@ -268,12 +299,13 @@ export default function PackJuridiqueApp() {
       icon: HandShake,
       color: 'from-cyan-500 to-blue-600',
       endpoint: '/generate-contract',
+      isFree: false,
     },
   ];
 
   const handleGenerate = async (doc: DocumentType) => {
-    // Mentions légales = toujours accessible
-    if (doc.id !== 'mentions' && localStorage.getItem('aPaye') !== 'true') {
+    // Vérifier si le document nécessite un paiement
+    if (!doc.isFree && !isPremium) {
       alert(
         '🔐 Ce document est réservé aux membres premium. Clique sur "Débloquer" pour y accéder.'
       );
@@ -312,6 +344,10 @@ export default function PackJuridiqueApp() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const goToAcheter = () => {
+    router.push('/acheter');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
       {/* Background decoration */}
@@ -327,7 +363,7 @@ export default function PackJuridiqueApp() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium mb-4 shadow-lg">
               <Sparkles size={16} />
-              Les 5 Essentiels du Freelance
+              {isPremium ? 'Premium Activé ✨' : 'Les 5 Essentiels du Freelance'}
             </div>
             <h1 className="text-6xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
               Pack Juridique Complet
@@ -351,6 +387,12 @@ export default function PackJuridiqueApp() {
                 <User className="text-white" size={24} />
               </div>
               <h2 className="text-2xl font-semibold text-slate-800">Tes Informations</h2>
+              {isPremium && (
+                <div className="ml-auto inline-flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  <Crown size={12} />
+                  Premium
+                </div>
+              )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -387,24 +429,66 @@ export default function PackJuridiqueApp() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               {documents.map(doc => {
                 const IconComponent = doc.icon;
+                const isLocked = !doc.isFree && !isPremium;
+
                 return (
                   <button
                     key={doc.id}
                     onClick={() => handleGenerate(doc)}
                     disabled={loading || !nom || !activite}
-                    className="group relative overflow-hidden bg-white/50 backdrop-blur-sm border-2 border-gray-200 hover:border-transparent rounded-2xl p-4 transition-all duration-300 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+                    className={`group relative overflow-hidden backdrop-blur-sm border-2 rounded-2xl p-4 transition-all duration-300 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] ${
+                      isLocked
+                        ? 'bg-gray-100/50 border-gray-300 hover:border-gray-400'
+                        : 'bg-white/50 border-gray-200 hover:border-transparent'
+                    }`}
                   >
+                    {/* Lock overlay for premium documents */}
+                    {isLocked && (
+                      <div className="absolute inset-0 bg-gray-200/60 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
+                        <div className="text-center">
+                          <Lock size={24} className="text-gray-500 mx-auto mb-2" />
+                          <span className="text-xs text-gray-600 font-medium">Premium</span>
+                        </div>
+                      </div>
+                    )}
+
                     <div
                       className={`absolute inset-0 bg-gradient-to-r ${doc.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
                     ></div>
+
                     <div className="relative text-center">
-                      <div
-                        className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${doc.color} text-white mb-3 group-hover:scale-110 transition-transform duration-300`}
-                      >
-                        <IconComponent size={20} />
+                      <div className="relative">
+                        <div
+                          className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${
+                            doc.color
+                          } text-white mb-3 group-hover:scale-110 transition-transform duration-300 ${
+                            isLocked ? 'opacity-60' : ''
+                          }`}
+                        >
+                          <IconComponent size={20} />
+                        </div>
+                        {doc.isFree && (
+                          <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full font-medium">
+                            Gratuit
+                          </div>
+                        )}
                       </div>
-                      <h3 className="text-base font-semibold text-slate-800 mb-2">{doc.title}</h3>
-                      <p className="text-xs text-slate-600 leading-relaxed">{doc.description}</p>
+
+                      <h3
+                        className={`text-base font-semibold mb-2 ${
+                          isLocked ? 'text-gray-600' : 'text-slate-800'
+                        }`}
+                      >
+                        {doc.title}
+                      </h3>
+                      <p
+                        className={`text-xs leading-relaxed ${
+                          isLocked ? 'text-gray-500' : 'text-slate-600'
+                        }`}
+                      >
+                        {doc.description}
+                      </p>
+
                       {loading && documentType === doc.title && (
                         <div className="absolute inset-0 bg-white/80 rounded-2xl flex items-center justify-center">
                           <div className="flex flex-col items-center gap-2">
@@ -433,6 +517,32 @@ export default function PackJuridiqueApp() {
               <div className="flex items-center gap-2 p-4 bg-emerald-50 border border-emerald-200 rounded-xl mt-6">
                 <Check size={20} className="text-emerald-600" />
                 <p className="text-emerald-800 font-medium">{message}</p>
+              </div>
+            )}
+
+            {/* Premium CTA Button - Only show if not premium */}
+            {!isPremium && (
+              <div className="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl text-center">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Crown size={20} className="text-amber-500" />
+                  <span className="font-semibold text-slate-800">Débloquer tous les documents</span>
+                </div>
+                <p className="text-slate-600 text-sm mb-4">
+                  Accède à CGV, CGU, RGPD et contrats pour seulement 19,90€
+                </p>
+                <button
+                  onClick={goToAcheter}
+                  className="group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-2">
+                    <Rocket size={18} />
+                    Débloquer maintenant
+                    <ArrowRight
+                      size={16}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </div>
+                </button>
               </div>
             )}
           </div>
@@ -474,16 +584,6 @@ export default function PackJuridiqueApp() {
             </div>
           )}
         </div>
-        <button
-          onClick={() => router.push('/acheter')}
-          className="group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 mb-16"
-        >
-          <div className="flex items-center gap-3">
-            <Rocket size={24} />
-            Débloquer tous les documents
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </div>
-        </button>
       </div>
 
       <style jsx>{`
