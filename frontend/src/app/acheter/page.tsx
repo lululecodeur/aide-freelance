@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 export default function AcheterPage() {
   return (
     <div className="min-h-screen py-20 px-4 bg-white text-center">
