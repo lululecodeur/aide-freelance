@@ -132,7 +132,7 @@ export default function Home() {
     {
       icon: Zap,
       title: 'Génération Rapide',
-      description: 'Créé en quelques secondes grâce à l&apos;IA',
+      description: 'Créé en quelques secondes par IA',
       color: 'from-purple-500 to-pink-500',
     },
   ];
