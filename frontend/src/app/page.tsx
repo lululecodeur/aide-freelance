@@ -168,7 +168,7 @@ export default function Home() {
 
           {/* Main Title */}
           <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
-            Pack Freelance IA
+            Pack Freelance juridique
           </h1>
 
           {/* Subtitle */}
